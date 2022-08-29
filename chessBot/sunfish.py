@@ -11,6 +11,7 @@ from . import tools
 ###############################################################################
 
 piece = { 'P': 100, 'N': 280, 'B': 320, 'R': 479, 'Q': 929, 'K': 60000 }
+
 pst = {
     'P': (   0,   0,   0,   0,   0,   0,   0,   0,
             78,  83,  86,  73, 102,  82,  85,  90,
@@ -402,9 +403,10 @@ def print_pos(pos):
     print('    a b c d e f g h \n\n')
 
 
-def getMove(x,f,t):
+def getMove(x,f,t,):
     ##edit inital
-    
+    print(piece)
+
     hist = [Position(x, 0, (True,True), (True,True), 0, 0)]
     searcher = Searcher()
     while True:

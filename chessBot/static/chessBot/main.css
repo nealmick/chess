@@ -95,23 +95,6 @@ ul {
   margin: 0;
 }
 
-.background3{
-  background: url("giphy.gif");
-  background-image: linear-gradient(to bottom, rgba(23,162,184,0.6) 10%,rgba(23,162,184,0.6) 25%), url("giphy.gif");
-  background-size: auto;
-}
-.background2{
-  background: url("giphy.gif");
-  background-image: linear-gradient(to bottom, rgba(23,162,184,0.6) 10%,rgba(23,162,184,0.6) 25%), url("giphy.gif");
-
-}
-.background{
-  background: url("giphy.gif");
-  background-image: linear-gradient(to bottom, rgba(23,162,184,0.6) 20%,rgba(23,162,184,0.4) 70%), url("giphy.gif");
-
-  background-size: auto;
-
-}
 
 .content-section {
   background: #333333;
@@ -129,13 +112,8 @@ ul {
 
 
 .content-section:hover {
-  background: #333333;
-  padding: 10px 20px;
-  border: 2px solid #17a2b8;
-  border-radius: 7px;
-  margin-bottom: 10px;
-  color: white;
-  box-shadow: 2px 4px 8px rgba(18, 18, 18, 0.8);
+
+  box-shadow: 2px 4px 8px rgba(18, 18, 18, 0.99);
 
 }
 
@@ -411,15 +389,32 @@ li {
 }
 .homeChess{
   
-  padding-top: 250px;
+  padding-top: 200px;
 }
 .homeChess2{
   
-  padding-top: 100px;
+  padding-top: 50px;
 }
 .ccc{
   position: relative;
 }
 .aboutLeft {
   text-align: left;
+}
+
+
+.infoBox1{
+  margin: auto;
+  width: 500px;
+  overflow: hidden;
+
+
+}
+.highlight1-32417{
+  border-radius: 2px;
+  box-shadow: inset 0 0 3px 3px #17a2b8!important;
+}
+.highlight2-9c5d2{
+  border-radius: 2px;
+  box-shadow: inset 0 0 3px 3px #17a2b8 !important;
 }

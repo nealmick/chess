@@ -3,7 +3,7 @@
 
 {% load static %}
 {% block content%}
-<div class="container">
+
 <link rel="stylesheet"
       href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
       integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
@@ -16,16 +16,33 @@
     
 </div>
 
-<div class="center">
-    <div class="content-section center3 ccc" style="color:white">
+    <div class="content-section  infoBox1" style="color:white">
         <center>
+
+    <div>
+    <br>
+
+        
+    <button class="btn btn-outline-info " id="reset-btn" onclick="game = moveBack(game)">Back</button>
+    <button class="btn btn-outline-info " id="reset-btn" onclick="newGame()">Reset</button>
+    </div>
+    <br>
+    king: <input type="text" id="king" name="king" size="10" value="60000">
+    queen: <input type="text" id="queen" name="queen" size="10"value="929">
+    rook: <input type="text" id="rook" name="rook" size="10"value="479">
+    <br>
+    <br>
+    bishop: <input type="text" id="bishop" name="bishop" size="10" value="320">
+    knight: <input type="text" id="knight" name="knight" size="10" value="280">
+    pawn: <input type="text" id="pawn" name="pawn" size="10" value="100">
+    <br>
+    <br>
         <label>Game Status:</label>
         <div id="status"></div>
         <label>FEN String:</label>
         <div id="fen"></div>
         </center>
     </div>
-</div>
 
     <script  src="{% static 'chessBot/chessboard-1.0.0.js'%}"></script>
     <script  src="{% static 'chessBot/chess.js'%}"></script>
