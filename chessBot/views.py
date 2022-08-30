@@ -1,8 +1,9 @@
 from django.shortcuts import render
-
+import pickle
 # Create your views here.
 from django.http import HttpResponse, JsonResponse
 from . import sunfish
+
 from . import tools
 
 def index(request):
@@ -13,6 +14,7 @@ def index(request):
 
 def nextMoveSunFish(request):
     context = {}
+    
     print('sunfish move!')
        
     url = request.build_absolute_uri()
@@ -72,17 +74,39 @@ def nextMoveSunFish(request):
     print('to:',_to)
     print('fen ===========', finalFen)
 
+    p = { 'P': int(pawn), 'N': int(knight), 'B': int(bishop), 'R': int(rook), 'Q': int(queen), 'K': int(king) }
 
+
+    
     pos = tools.parseFEN(ff)
+    
     sunfish.print_pos(pos)
     
-    piece = { 'P': pawn, 'N': knight, 'B': bishop, 'R': rook, 'Q': queen, 'K': king }
-
-
-    sunfish.piece = { 'P': pawn, 'N': knight, 'B': bishop, 'R': rook, 'Q': queen, 'K': king }
-    f = sunfish.getMove(pos[0],_from,_to)
+    f = sunfish.getMove(pos[0],_from,_to,p)
  
 
     return JsonResponse({'asdf': f})
  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

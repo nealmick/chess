@@ -21,11 +21,14 @@
 
     <div>
     <br>
-
-        
+    <label>Game Status:</label>
+    <div id="status"></div>
+    <br>
     <button class="btn btn-outline-info " id="reset-btn" onclick="game = moveBack(game)">Back</button>
     <button class="btn btn-outline-info " id="reset-btn" onclick="newGame()">Reset</button>
     </div>
+    <br>
+    <label>Piece value:</label>
     <br>
     king: <input type="text" id="king" name="king" size="10" value="60000">
     queen: <input type="text" id="queen" name="queen" size="10"value="929">
@@ -37,8 +40,7 @@
     pawn: <input type="text" id="pawn" name="pawn" size="10" value="100">
     <br>
     <br>
-        <label>Game Status:</label>
-        <div id="status"></div>
+
         <label>FEN String:</label>
         <div id="fen"></div>
         </center>
