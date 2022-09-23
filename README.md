@@ -6,8 +6,8 @@ This project is built using the django library.  The front end game was built us
 
 #### Install:
 ```bash
-git clone github.com/nealmick/ttt
-cd ttt
+git clone github.com/nealmick/chess
+cd chess
 pip install -r requirements.txt
 python3 manage.py runserver
 ```
