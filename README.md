@@ -9,6 +9,7 @@ There are more unique chess game states than atoms in the known universe(10^111)
 2.  chessBot - Logic for receiving board states, move generation, and returning board state.
 
 #### Install:
+
 ```bash
 git clone https://github.com/nealmick/chess
 cd chess
