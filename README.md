@@ -21,3 +21,6 @@ Think you can beat it?
 # Live:
 https://nealmick.com/chess/
 
+# Sunfish:
+https://github.com/thomasahle/sunfish
+
