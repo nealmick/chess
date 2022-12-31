@@ -18,6 +18,11 @@ pip install -r requirements.txt
 python3 manage.py runserver
 ```
 
+
+<img src="https://i.imgur.com/5g4ZcGh.png" width="600" height="500" />
+
+
+
 Think you can beat it?
 # Live:
 https://nealmick.com/chess/
