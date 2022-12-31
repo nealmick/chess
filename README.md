@@ -19,7 +19,7 @@ python3 manage.py runserver
 ```
 
 
-<img src="https://i.imgur.com/5g4ZcGh.png" width="600" height="500" />
+<img src="https://i.imgur.com/5g4ZcGh.png" width="400" height="500" />
 
 
 
