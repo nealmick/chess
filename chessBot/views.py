@@ -1,13 +1,27 @@
 from django.shortcuts import render
 import pickle
+import os
 # Create your views here.
 from django.http import HttpResponse, JsonResponse
 from . import sunfish
 
 from . import tools
 
+# File to store the latest FEN
+FEN_STATE_FILE = os.path.join(os.path.dirname(__file__), 'latest_fen.txt')
+
 def index(request):
     return render(request,'chessBot/index.html')
+
+
+def getState(request):
+    """Return the latest FEN string from the last game move."""
+    try:
+        with open(FEN_STATE_FILE, 'r') as f:
+            fen = f.read().strip()
+        return JsonResponse({'fen': fen})
+    except FileNotFoundError:
+        return JsonResponse({'fen': None, 'error': 'No game state yet'})
 
 
 
@@ -83,7 +97,10 @@ def nextMoveSunFish(request):
     sunfish.print_pos(pos)
     
     f = sunfish.getMove(pos[0],_from,_to,p)
- 
+
+    # Save the latest FEN state
+    with open(FEN_STATE_FILE, 'w') as file:
+        file.write(f)
 
     return JsonResponse({'asdf': f})
  

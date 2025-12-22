@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Static files collected for production
+staticfiles/
+
+# Game state file
+latest_fen.txt
