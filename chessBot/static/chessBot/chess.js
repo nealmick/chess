@@ -179,9 +179,18 @@ function moveBack(game){
 
 
 function newGame(){
-  location.reload();
-
-
+  // Call reset endpoint to clear move history, then reload
+  $.ajax({
+    type: "GET",
+    url: "/chess/resetGame/",
+    async: false,
+    success: function() {
+      location.reload();
+    },
+    error: function() {
+      location.reload();
+    }
+  });
 }
 
 
