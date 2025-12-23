@@ -29,11 +29,10 @@ def parse_fen_to_board(fen):
         board.append(board_row)
     return board
 
-def find_move_from_boards(old_board, new_board):
-    """Compare two board arrays and return move info with capture detection."""
-    from_x, from_y = -1, -1
-    to_x, to_y = -1, -1
-    captured = None
+def find_moves_from_boards(old_board, new_board, color):
+    """Compare two board arrays and return list of moves (handles castling)."""
+    froms = []  # squares where pieces left
+    tos = []    # squares where pieces arrived
 
     for y in range(8):
         for x in range(8):
@@ -45,20 +44,27 @@ def find_move_from_boards(old_board, new_board):
 
             # Piece left this square
             if old_piece != '.' and new_piece == '.':
-                from_x, from_y = x, 7 - y
+                froms.append((x, 7 - y, old_piece))
             # Piece arrived (or replaced another)
             elif new_piece != '.' and old_piece != new_piece:
-                to_x, to_y = x, 7 - y
-                if old_piece != '.':
-                    captured = old_piece
+                captured = old_piece if old_piece != '.' else None
+                tos.append((x, 7 - y, new_piece, captured))
 
-    if from_x >= 0 and to_x >= 0:
-        return {
-            'from': [from_x, from_y],
-            'to': [to_x, to_y],
-            'capture': captured
-        }
-    return None
+    moves = []
+    # Match each "to" with its corresponding "from" by piece type
+    for to_x, to_y, piece, captured in tos:
+        for i, (fx, fy, fp) in enumerate(froms):
+            if fp == piece:
+                moves.append({
+                    'from': [fx, fy],
+                    'to': [to_x, to_y],
+                    'capture': captured,
+                    'color': color
+                })
+                froms.pop(i)
+                break
+
+    return moves
 
 def load_moves():
     try:
@@ -179,24 +185,42 @@ def nextMoveSunFish(request):
     if player_captured == '.':
         player_captured = None
 
-    # Record player's move
+    # Record player's move (white)
     player_move = {
         'from': [from_x, from_y],
         'to': [to_x, to_y],
-        'capture': player_captured
+        'capture': player_captured,
+        'color': 'white'
     }
     data['moves'].append(player_move)
 
+    # Check for player castling (king moved 2 squares)
+    piece_moved = board_before[7 - from_y][from_x]
+    if piece_moved == 'K' and abs(to_x - from_x) == 2:
+        # Castling! Add rook move
+        if to_x > from_x:  # Kingside
+            rook_move = {'from': [7, 0], 'to': [5, 0], 'capture': None, 'color': 'white'}
+        else:  # Queenside
+            rook_move = {'from': [0, 0], 'to': [3, 0], 'capture': None, 'color': 'white'}
+        data['moves'].append(rook_move)
+
     # Build intermediate board (after player move, before AI)
-    # Apply player's move to get intermediate state
     board_after_player = [row[:] for row in board_before]  # copy
-    piece_moved = board_after_player[7 - from_y][from_x]
     board_after_player[7 - from_y][from_x] = '.'
     board_after_player[7 - to_y][to_x] = piece_moved
 
-    # Now find AI's move by comparing intermediate to final
-    ai_move = find_move_from_boards(board_after_player, parse_fen_to_board(f))
-    if ai_move:
+    # Handle castling rook in intermediate board
+    if piece_moved == 'K' and abs(to_x - from_x) == 2:
+        if to_x > from_x:  # Kingside
+            board_after_player[7][7] = '.'
+            board_after_player[7][5] = 'R'
+        else:  # Queenside
+            board_after_player[7][0] = '.'
+            board_after_player[7][3] = 'R'
+
+    # Now find AI's move(s) by comparing intermediate to final (black)
+    ai_moves = find_moves_from_boards(board_after_player, parse_fen_to_board(f), 'black')
+    for ai_move in ai_moves:
         data['moves'].append(ai_move)
 
     save_moves(data)
