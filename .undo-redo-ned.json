@@ -1,0 +1,53 @@
+{
+    "files": {
+        "/Users/neal/dev/chess/README.md": {
+            "lastCommittedState": "\n\nhttps://github.com/nealmick/chess\n\nhttps://chess-6ekpgq.fly.dev/\n\nhttps://chess-6ekpgq.fly.dev/chess/getState/\n\n\n\n\n# Chess Engine\n\nSunFish engine implemented using the Django and Chess libraries \n\n\nThere are more unique chess game states, than atoms in the known universe(10^111).  The engine evaluates any position and finds the best move.  Evaluation is done by first generating a tree structure that contains every possible board state up to a certain depth (moves ahead).  The root of the tree is the current game state.  Each branch of the tree is a possible move.  Every level of depth in the tree the player flips (MiniMax).  Terminal state of each branch is reached at the max depth or can be cut early if the branch score drops below a certain value(alpha/beta pruning).  Each branch is evaluated based on a scoring system.  The scoring system works by assigning each piece a value and adding or subtracting that value to the current branch score if the piece is captured.  Positions are also evaluated based on where each piece is located on the board, a piece map where knights are best in the center, pawns are encouraged to move forward, etc… The best score is kept while traversing the tree and updated if a better branch score is found.  Once every move is evaluated the board is converted to a FEN string and sent back to the front end.  The engine is written in Python and is a fork of an engine called Sunfish.  All of the tree computation occurs on the server.  The server is a Django web application which receives and replies to requests from the front end.\n\n#### Django apps:\n1.  Mysite - Default django app.\n2.  chessBot - Logic for receiving board states, move generation, and returning board state.\n\n#### Install:\n\n```bash\ngit clone https://github.com/nealmick/chess\ncd chess\npip install -r requirements.txt\npython3 manage.py runserver\n```\n\n\n<img src=\"https://i.imgur.com/5g4ZcGh.png\" width=\"400\" height=\"500\" />\n\n\n\nThink you can beat it?\n# Live:\nhttps://nealmick.com/chess/\n\n# Sunfish:\nhttps://github.com/thomasahle/sunfish\n\n",
+            "maxStackSize": 50,
+            "redoStack": [],
+            "undoStack": [
+                {
+                    "cursor_after": 8,
+                    "cursor_before": 0,
+                    "inserted": "\n\n\n\n\n\n\n\n",
+                    "position": 0,
+                    "removed": ""
+                },
+                {
+                    "cursor_after": 32,
+                    "cursor_before": 3,
+                    "inserted": "https://chess-6ekpgq.fly.dev/",
+                    "position": 3,
+                    "removed": ""
+                },
+                {
+                    "cursor_after": 34,
+                    "cursor_before": 32,
+                    "inserted": "\n\n",
+                    "position": 37,
+                    "removed": ""
+                },
+                {
+                    "cursor_after": 78,
+                    "cursor_before": 34,
+                    "inserted": "https://chess-6ekpgq.fly.dev/chess/getState/",
+                    "position": 34,
+                    "removed": ""
+                },
+                {
+                    "cursor_after": 35,
+                    "cursor_before": 2,
+                    "inserted": "https://github.com/nealmick/chess",
+                    "position": 2,
+                    "removed": ""
+                },
+                {
+                    "cursor_after": 36,
+                    "cursor_before": 35,
+                    "inserted": "\n",
+                    "position": 36,
+                    "removed": ""
+                }
+            ]
+        }
+    }
+}

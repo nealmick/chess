@@ -1,27 +1,44 @@
 from django.shortcuts import render
 import pickle
 import os
+import json
 # Create your views here.
 from django.http import HttpResponse, JsonResponse
 from . import sunfish
 
 from . import tools
 
-# File to store the latest FEN
-FEN_STATE_FILE = os.path.join(os.path.dirname(__file__), 'latest_fen.txt')
+# File to store the FEN history
+FEN_STATE_FILE = os.path.join(os.path.dirname(__file__), 'fen_history.json')
+
+# Starting position FEN
+START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+
+def load_fen_history():
+    try:
+        with open(FEN_STATE_FILE, 'r') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return [START_FEN]
+
+def save_fen_history(history):
+    with open(FEN_STATE_FILE, 'w') as f:
+        json.dump(history, f)
 
 def index(request):
     return render(request,'chessBot/index.html')
 
 
 def getState(request):
-    """Return the latest FEN string from the last game move."""
-    try:
-        with open(FEN_STATE_FILE, 'r') as f:
-            fen = f.read().strip()
-        return JsonResponse({'fen': fen})
-    except FileNotFoundError:
-        return JsonResponse({'fen': None, 'error': 'No game state yet'})
+    """Return the full list of FEN strings for the game."""
+    history = load_fen_history()
+    return JsonResponse({'moves': history, 'count': len(history)})
+
+
+def resetGame(request):
+    """Reset the game history."""
+    save_fen_history([START_FEN])
+    return JsonResponse({'status': 'reset', 'moves': [START_FEN]})
 
 
 
@@ -98,9 +115,11 @@ def nextMoveSunFish(request):
     
     f = sunfish.getMove(pos[0],_from,_to,p)
 
-    # Save the latest FEN state
-    with open(FEN_STATE_FILE, 'w') as file:
-        file.write(f)
+    # Save both player's move and AI's response to history
+    history = load_fen_history()
+    history.append(finalFen)  # Player's move (board state after player moved)
+    history.append(f)         # AI's response
+    save_fen_history(history)
 
     return JsonResponse({'asdf': f})
  

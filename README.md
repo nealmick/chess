@@ -1,3 +1,14 @@
+
+
+https://github.com/nealmick/chess
+
+https://chess-6ekpgq.fly.dev/
+
+https://chess-6ekpgq.fly.dev/chess/getState/
+
+
+
+
 # Chess Engine
 
 SunFish engine implemented using the Django and Chess libraries 
