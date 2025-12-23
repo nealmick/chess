@@ -29,11 +29,8 @@ def parse_fen_to_board(fen):
         board.append(board_row)
     return board
 
-def find_move(old_fen, new_fen):
-    """Compare two FENs and return move info with capture detection."""
-    old_board = parse_fen_to_board(old_fen)
-    new_board = parse_fen_to_board(new_fen)
-
+def find_move_from_boards(old_board, new_board):
+    """Compare two board arrays and return move info with capture detection."""
     from_x, from_y = -1, -1
     to_x, to_y = -1, -1
     captured = None
@@ -164,22 +161,44 @@ def nextMoveSunFish(request):
     
     f = sunfish.getMove(pos[0],_from,_to,p)
 
-    # Load current state and compute moves
+    # Load current state
     data = load_moves()
-    last_fen = data['last_fen']
 
-    # Player's move (compare last_fen to finalFen)
-    player_move = find_move(last_fen, finalFen)
-    if player_move:
-        data['moves'].append(player_move)
+    # Parse the board to check for captures
+    board_before = parse_fen_to_board(finalFen)
 
-    # AI's move (compare finalFen to f)
-    ai_move = find_move(finalFen, f)
+    # Convert chess notation (e2, e4) to x,y coordinates
+    from_x = ord(_from[0]) - ord('a')
+    from_y = int(_from[1]) - 1
+    to_x = ord(_to[0]) - ord('a')
+    to_y = int(_to[1]) - 1
+
+    # Check if player captured a piece (was there a piece at destination?)
+    dest_row = 7 - to_y  # flip for board array indexing
+    player_captured = board_before[dest_row][to_x]
+    if player_captured == '.':
+        player_captured = None
+
+    # Record player's move
+    player_move = {
+        'from': [from_x, from_y],
+        'to': [to_x, to_y],
+        'capture': player_captured
+    }
+    data['moves'].append(player_move)
+
+    # Build intermediate board (after player move, before AI)
+    # Apply player's move to get intermediate state
+    board_after_player = [row[:] for row in board_before]  # copy
+    piece_moved = board_after_player[7 - from_y][from_x]
+    board_after_player[7 - from_y][from_x] = '.'
+    board_after_player[7 - to_y][to_x] = piece_moved
+
+    # Now find AI's move by comparing intermediate to final
+    ai_move = find_move_from_boards(board_after_player, parse_fen_to_board(f))
     if ai_move:
         data['moves'].append(ai_move)
 
-    # Update last_fen to current board state
-    data['last_fen'] = f
     save_moves(data)
 
     return JsonResponse({'asdf': f})
