@@ -8,37 +8,86 @@ from . import sunfish
 
 from . import tools
 
-# File to store the FEN history
-FEN_STATE_FILE = os.path.join(os.path.dirname(__file__), 'fen_history.json')
+# File to store the move history
+MOVES_FILE = os.path.join(os.path.dirname(__file__), 'moves_history.json')
 
 # Starting position FEN
 START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 
-def load_fen_history():
+def parse_fen_to_board(fen):
+    """Parse FEN string into 8x8 list."""
+    board = []
+    position = fen.split(' ')[0]
+    rows = position.split('/')
+    for row in rows:
+        board_row = []
+        for char in row:
+            if char.isdigit():
+                board_row.extend(['.'] * int(char))
+            else:
+                board_row.append(char)
+        board.append(board_row)
+    return board
+
+def find_move(old_fen, new_fen):
+    """Compare two FENs and return move info with capture detection."""
+    old_board = parse_fen_to_board(old_fen)
+    new_board = parse_fen_to_board(new_fen)
+
+    from_x, from_y = -1, -1
+    to_x, to_y = -1, -1
+    captured = None
+
+    for y in range(8):
+        for x in range(8):
+            old_piece = old_board[y][x]
+            new_piece = new_board[y][x]
+
+            if old_piece == new_piece:
+                continue
+
+            # Piece left this square
+            if old_piece != '.' and new_piece == '.':
+                from_x, from_y = x, 7 - y
+            # Piece arrived (or replaced another)
+            elif new_piece != '.' and old_piece != new_piece:
+                to_x, to_y = x, 7 - y
+                if old_piece != '.':
+                    captured = old_piece
+
+    if from_x >= 0 and to_x >= 0:
+        return {
+            'from': [from_x, from_y],
+            'to': [to_x, to_y],
+            'capture': captured
+        }
+    return None
+
+def load_moves():
     try:
-        with open(FEN_STATE_FILE, 'r') as f:
+        with open(MOVES_FILE, 'r') as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
-        return [START_FEN]
+        return {'last_fen': START_FEN, 'moves': []}
 
-def save_fen_history(history):
-    with open(FEN_STATE_FILE, 'w') as f:
-        json.dump(history, f)
+def save_moves(data):
+    with open(MOVES_FILE, 'w') as f:
+        json.dump(data, f)
 
 def index(request):
     return render(request,'chessBot/index.html')
 
 
 def getState(request):
-    """Return the full list of FEN strings for the game."""
-    history = load_fen_history()
-    return JsonResponse({'moves': history, 'count': len(history)})
+    """Return the list of moves with from/to/capture info."""
+    data = load_moves()
+    return JsonResponse({'moves': data['moves'], 'count': len(data['moves'])})
 
 
 def resetGame(request):
     """Reset the game history."""
-    save_fen_history([START_FEN])
-    return JsonResponse({'status': 'reset', 'moves': [START_FEN]})
+    save_moves({'last_fen': START_FEN, 'moves': []})
+    return JsonResponse({'status': 'reset', 'moves': []})
 
 
 
@@ -115,11 +164,23 @@ def nextMoveSunFish(request):
     
     f = sunfish.getMove(pos[0],_from,_to,p)
 
-    # Save both player's move and AI's response to history
-    history = load_fen_history()
-    history.append(finalFen)  # Player's move (board state after player moved)
-    history.append(f)         # AI's response
-    save_fen_history(history)
+    # Load current state and compute moves
+    data = load_moves()
+    last_fen = data['last_fen']
+
+    # Player's move (compare last_fen to finalFen)
+    player_move = find_move(last_fen, finalFen)
+    if player_move:
+        data['moves'].append(player_move)
+
+    # AI's move (compare finalFen to f)
+    ai_move = find_move(finalFen, f)
+    if ai_move:
+        data['moves'].append(ai_move)
+
+    # Update last_fen to current board state
+    data['last_fen'] = f
+    save_moves(data)
 
     return JsonResponse({'asdf': f})
  
